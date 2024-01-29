@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"newsletter-app/pkg/domain"
+	"newsletter-app/pkg/infrastructure/adapters/email"
 	"newsletter-app/pkg/infrastructure/adapters/mongodb"
 	"time"
 )
@@ -15,12 +16,14 @@ import (
 // NewsletterService es una estructura que maneja la lógica de negocio relacionada con los boletines.
 type NewsletterService struct {
 	newsletterRepository *mongodb.NewsletterRepository
+	subscriberRepository *mongodb.SubscriberRepository
 }
 
 // NewNewsletterService crea una nueva instancia de NewsletterService.
 func NewNewsletterService() *NewsletterService {
 	return &NewsletterService{
 		newsletterRepository: mongodb.NewNewsletterRepository(),
+		subscriberRepository: mongodb.NewSubscriberRepository(),
 	}
 }
 
@@ -55,9 +58,9 @@ func (s *NewsletterService) GetNewsletterByID(newsletterID string) (*domain.News
 }
 
 // EnvíarNewsletter envía un boletín a una lista de suscriptores.
-func (s *NewsletterService) SendNewsletter(w http.ResponseWriter, r *http.Request, newsletterID string) error {
+func (s *NewsletterService) SendNewsletter(w http.ResponseWriter, r *http.Request, newsletterID string, emailSender email.Sender) error {
 	// Obtener el boletín por ID
-	newsletter, err := s.GetNewsletterByID(newsletterID)
+	_, err := s.GetNewsletterByID(newsletterID)
 	if err != nil {
 		RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve newsletter")
 		return err
@@ -80,7 +83,7 @@ func (s *NewsletterService) SendNewsletter(w http.ResponseWriter, r *http.Reques
 	// Iterar sobre los destinatarios y enviar el boletín
 	for _, recipient := range requestBody.Recipients {
 		// Llamar al servicio para obtener el suscriptor por email
-		subscriber, err := s.GetSubscriberByEmail(recipient.Email)
+		subscriber, err := s.subscriberRepository.GetSubscriberByEmail(recipient.Email)
 		if err != nil {
 			// Verificar si hubo un error diferente al no encontrar documentos
 			if err.Error() != "mongo: no documents in result" {
@@ -130,6 +133,7 @@ func (s *NewsletterService) ProgramarEnvío(newsletterID string, scheduleTime ti
 	// Lógica para programar el envío del boletín
 	return nil
 }
+
 func decodeBase64Attachment(name, data string) (domain.Attachment, error) {
 	decodedData, err := base64.StdEncoding.DecodeString(data)
 	if err != nil {

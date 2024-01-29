@@ -4,6 +4,7 @@ package v1
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"newsletter-app/pkg/domain"
 	"newsletter-app/pkg/infrastructure/adapters/email"
@@ -29,6 +30,14 @@ func SendNewsletterHandler(subscriberService *service.SubscriberService, newslet
 		newsletterID := mux.Vars(r)["newsletterID"]
 		if newsletterID == "" {
 			service.RespondWithError(w, http.StatusBadRequest, "Invalid newsletter ID")
+			return
+		}
+
+		// Llamar a la función SendNewsletter en el servicio
+		err := newsletterService.SendNewsletter(w, r, newsletterID, emailSender)
+		if err != nil {
+			// Manejar el error (puedes logearlo, enviar una respuesta específica, etc.)
+			fmt.Printf("Error sending newsletter: %s\n", err.Error())
 			return
 		}
 

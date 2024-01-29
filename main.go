@@ -5,6 +5,8 @@ import (
 	"net/http"
 	v1 "newsletter-app/pkg/api/v1"
 	"newsletter-app/pkg/infrastructure/adapters/mongodb"
+
+	"github.com/gorilla/handlers"
 )
 
 func main() {
@@ -20,6 +22,10 @@ func main() {
 
 	// Configurar el enrutador con el servicio de suscriptores y el sender de correo electrónico
 	router := v1.SetupRouter()
+
+	// Habilitar CORS permitiendo cualquier origen
+	allowedOrigins := handlers.AllowedOrigins([]string{"*"})
+	router.Use(handlers.CORS(allowedOrigins))
 
 	// Iniciar el servidor
 	port := 8080

@@ -35,6 +35,7 @@ func SetupRouter() *mux.Router {
 	// Agregar ruta para enviar boletín
 	r.HandleFunc("/api/v1/newsletters/send/{newsletterID}", SendNewsletterHandler(subscriberService, newsletterService, emailSender)).Methods("POST")
 	r.HandleFunc("/api/v1/newsletters", CreateNewsletterHandler(newsletterService)).Methods("POST")
+	r.HandleFunc("/api/v1/newsletters", GetNewslettersHandler(newsletterService)).Methods("GET")
 
 	// Ruta para Swagger
 	r.PathPrefix("/docs/").Handler(httpSwagger.WrapHandler)

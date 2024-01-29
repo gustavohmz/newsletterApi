@@ -57,6 +57,16 @@ func (s *NewsletterService) GetNewsletterByID(newsletterID string) (*domain.News
 	return s.newsletterRepository.GetNewsletterByID(newsletterID)
 }
 
+// GetNewsletters obtiene una lista de boletines con opciones de búsqueda y paginación.
+func (s *NewsletterService) GetNewsletters(searchName string, page int, pageSize int) ([]domain.Newsletter, error) {
+	newsletters, err := s.newsletterRepository.GetNewsletters(searchName, page, pageSize)
+	if err != nil {
+		return nil, err
+	}
+
+	return newsletters, nil
+}
+
 // EnvíarNewsletter envía un boletín a una lista de suscriptores.
 func (s *NewsletterService) SendNewsletter(w http.ResponseWriter, r *http.Request, newsletterID string, emailSender email.Sender) error {
 	// Obtener el boletín por ID

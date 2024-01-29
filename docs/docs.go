@@ -16,6 +16,53 @@ const docTemplate = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/api/v1/newsletters": {
+            "get": {
+                "description": "Retrieves a list of newsletters with optional search and pagination parameters",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "newsletters"
+                ],
+                "summary": "Get a list of newsletters",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Name of the newsletter to search for",
+                        "name": "name",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number for pagination",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of items per page for pagination",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ErrorResponse"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Allows an admin user to create a new newsletter",
                 "consumes": [
@@ -81,15 +128,6 @@ const docTemplate = `{
                         "name": "newsletterID",
                         "in": "path",
                         "required": true
-                    },
-                    {
-                        "description": "Request body containing recipients",
-                        "name": "requestBody",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/v1.SendNewsletterRequest"
-                        }
                     }
                 ],
                 "responses": {
@@ -320,22 +358,6 @@ const docTemplate = `{
             "properties": {
                 "error": {
                     "type": "string"
-                }
-            }
-        },
-        "v1.SendNewsletterRequest": {
-            "type": "object",
-            "properties": {
-                "recipients": {
-                    "type": "array",
-                    "items": {
-                        "type": "object",
-                        "properties": {
-                            "email": {
-                                "type": "string"
-                            }
-                        }
-                    }
                 }
             }
         }

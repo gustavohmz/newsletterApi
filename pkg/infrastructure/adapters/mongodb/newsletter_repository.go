@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 // NewsletterRepository es una estructura que maneja operaciones relacionadas con los boletines en MongoDB.
@@ -58,4 +59,44 @@ func (r *NewsletterRepository) UpdateNewsletter(newsletterID string) error {
 	// Ejecuta la actualización en la base de datos
 	_, err = r.newsletterCollection.UpdateOne(context.TODO(), filter, update)
 	return err
+}
+
+// GetNewsletters obtiene una lista de boletines con opciones de búsqueda y paginación.
+func (r *NewsletterRepository) GetNewsletters(searchName string, page int, pageSize int) ([]domain.Newsletter, error) {
+	// Crea un filtro para la búsqueda por nombre (si se proporciona)
+	filter := bson.M{}
+	if searchName != "" {
+		filter["name"] = primitive.Regex{Pattern: searchName, Options: "i"}
+	}
+
+	// Opciones de búsqueda
+	findOptions := options.Find()
+	findOptions.SetSkip(int64((page - 1) * pageSize))
+	findOptions.SetLimit(int64(pageSize))
+
+	// Realiza la búsqueda en la base de datos
+	cursor, err := r.newsletterCollection.Find(context.TODO(), filter, findOptions)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(context.TODO())
+
+	// Declara una variable para almacenar los boletines
+	var newsletters []domain.Newsletter
+
+	// Itera sobre los resultados y decodifica cada documento en una estructura de boletín
+	for cursor.Next(context.TODO()) {
+		var newsletter domain.Newsletter
+		if err := cursor.Decode(&newsletter); err != nil {
+			return nil, err
+		}
+		newsletters = append(newsletters, newsletter)
+	}
+
+	// Maneja cualquier error que pueda ocurrir durante el cursor
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	return newsletters, nil
 }

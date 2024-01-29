@@ -9,6 +9,7 @@ import (
 	"newsletter-app/pkg/domain"
 	"newsletter-app/pkg/infrastructure/adapters/email"
 	"newsletter-app/pkg/service"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -19,7 +20,6 @@ import (
 // @Accept json
 // @Produce json
 // @Param newsletterID path string true "ID of the newsletter to be sent"
-// @Param requestBody body SendNewsletterRequest true "Request body containing recipients"
 // @Success 200 {string} string "OK"
 // @Failure 400 {object} ErrorResponse "Bad Request"
 // @Failure 500 {object} ErrorResponse "Internal Server Error"
@@ -42,13 +42,6 @@ func SendNewsletterHandler(subscriberService *service.SubscriberService, newslet
 		}
 
 	}
-}
-
-// Estructura para la solicitud de envío de boletín
-type SendNewsletterRequest struct {
-	Recipients []struct {
-		Email string `json:"email"`
-	} `json:"recipients"`
 }
 
 // @Summary Create a new newsletter
@@ -97,6 +90,36 @@ func CreateNewsletterHandler(newsletterService *service.NewsletterService) http.
 			"status":  "OK",
 			"message": "Newsletter created successfully",
 		})
+	}
+}
+
+// @Summary Get a list of newsletters
+// @Description Retrieves a list of newsletters with optional search and pagination parameters
+// @Tags newsletters
+// @Accept json
+// @Produce json
+// @Param name query string false "Name of the newsletter to search for"
+// @Param page query int false "Page number for pagination"
+// @Param pageSize query int false "Number of items per page for pagination"
+// @Failure 400 {object} ErrorResponse "Bad Request"
+// @Failure 500 {object} ErrorResponse "Internal Server Error"
+// @Router /api/v1/newsletters [get]
+func GetNewslettersHandler(newsletterService *service.NewsletterService) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Obtener parámetros de consulta
+		name := r.URL.Query().Get("name")
+		page, _ := strconv.Atoi(r.URL.Query().Get("page"))
+		pageSize, _ := strconv.Atoi(r.URL.Query().Get("pageSize"))
+
+		// Llamar a la función en el servicio para obtener la lista de boletines
+		newsletters, err := newsletterService.GetNewsletters(name, page, pageSize)
+		if err != nil {
+			service.RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve newsletters")
+			return
+		}
+
+		// Responder con la lista de boletines
+		service.RespondWithJSON(w, http.StatusOK, newsletters)
 	}
 }
 

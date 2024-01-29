@@ -50,20 +50,42 @@ definitions:
       error:
         type: string
     type: object
-  v1.SendNewsletterRequest:
-    properties:
-      recipients:
-        items:
-          properties:
-            email:
-              type: string
-          type: object
-        type: array
-    type: object
 info:
   contact: {}
 paths:
   /api/v1/newsletters:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves a list of newsletters with optional search and pagination
+        parameters
+      parameters:
+      - description: Name of the newsletter to search for
+        in: query
+        name: name
+        type: string
+      - description: Page number for pagination
+        in: query
+        name: page
+        type: integer
+      - description: Number of items per page for pagination
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+      summary: Get a list of newsletters
+      tags:
+      - newsletters
     post:
       consumes:
       - application/json
@@ -104,12 +126,6 @@ paths:
         name: newsletterID
         required: true
         type: string
-      - description: Request body containing recipients
-        in: body
-        name: requestBody
-        required: true
-        schema:
-          $ref: '#/definitions/v1.SendNewsletterRequest'
       produces:
       - application/json
       responses:

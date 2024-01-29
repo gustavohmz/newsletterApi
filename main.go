@@ -25,7 +25,14 @@ func main() {
 
 	// Habilitar CORS permitiendo cualquier origen
 	allowedOrigins := handlers.AllowedOrigins([]string{"*"})
-	router.Use(handlers.CORS(allowedOrigins))
+	allowedMethods := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"})
+	allowedHeaders := handlers.AllowedHeaders([]string{"Accept", "Accept-Language", "Content-Type", "Content-Language", "Origin"})
+	router.Use(handlers.CORS(allowedOrigins, allowedMethods, allowedHeaders))
+
+	// Agregar manejador OPTIONS al enrutador
+	router.Methods("OPTIONS").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
 
 	// Iniciar el servidor
 	port := 8080

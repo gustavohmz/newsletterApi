@@ -4,6 +4,9 @@ package service
 
 import (
 	"encoding/base64"
+	"encoding/json"
+	"fmt"
+	"net/http"
 	"newsletter-app/pkg/domain"
 	"newsletter-app/pkg/infrastructure/adapters/mongodb"
 	"time"
@@ -23,7 +26,6 @@ func NewNewsletterService() *NewsletterService {
 
 // Función principal para crear boletines
 func (s *NewsletterService) SaveNewsletter(newsletter domain.Newsletter) error {
-	// Crear un nuevo slice para almacenar los adjuntos decodificados
 	var decodedAttachments []domain.Attachment
 
 	// Iterar sobre los archivos adjuntos en base64 y procesarlos
@@ -53,10 +55,74 @@ func (s *NewsletterService) GetNewsletterByID(newsletterID string) (*domain.News
 }
 
 // EnvíarNewsletter envía un boletín a una lista de suscriptores.
-func (s *NewsletterService) SendNewsletter(newsletterID string, subscribers []domain.Subscriber) error {
-	// Lógica para enviar el boletín a la lista de suscriptores
-	// Puedes utilizar un servicio externo para enviar correos electrónicos, como SendGrid o SMTP
+func (s *NewsletterService) SendNewsletter(w http.ResponseWriter, r *http.Request, newsletterID string) error {
+	// Obtener el boletín por ID
+	newsletter, err := s.GetNewsletterByID(newsletterID)
+	if err != nil {
+		RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve newsletter")
+		return err
+	}
+
+	// Obtener la lista de destinatarios del cuerpo de la solicitud
+	var requestBody SendNewsletterRequest
+	err = json.NewDecoder(r.Body).Decode(&requestBody)
+	if err != nil {
+		RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		return err
+	}
+
+	// Verificar si hay destinatarios para enviar el boletín
+	if len(requestBody.Recipients) == 0 {
+		RespondWithError(w, http.StatusBadRequest, "No recipients to send the newsletter to")
+		return nil
+	}
+
+	// Iterar sobre los destinatarios y enviar el boletín
+	for _, recipient := range requestBody.Recipients {
+		// Llamar al servicio para obtener el suscriptor por email
+		subscriber, err := s.GetSubscriberByEmail(recipient.Email)
+		if err != nil {
+			// Verificar si hubo un error diferente al no encontrar documentos
+			if err.Error() != "mongo: no documents in result" {
+				RespondWithError(w, http.StatusInternalServerError, "Failed to get subscriber")
+				return err
+			}
+			// Si no se encuentra el suscriptor, continuar con el siguiente destinatario
+			fmt.Printf("Subscriber not found for email %s\n", recipient.Email)
+			continue
+		}
+
+		// Imprimir información del suscriptor (para depuración)
+		fmt.Printf("Subscriber: %+v\n", subscriber)
+
+		// Utilizar el contenido del boletín
+		newsletterContent := "Contenido del boletín"
+
+		// Enviar boletín al destinatario
+		err = emailSender.Send("Asunto del Boletín", newsletterContent, []string{recipient.Email})
+		if err != nil {
+			// Manejar el error (puedes logearlo, enviar una respuesta específica, etc.)
+			fmt.Printf("Error sending newsletter to %s: %s\n", recipient.Email, err.Error())
+			continue
+		}
+
+		// Registrar el destinatario al que se le envió el boletín
+		fmt.Printf("Newsletter sent to %s\n", recipient.Email)
+	}
+
+	// Responder con éxito
+	RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+		"status":  "OK",
+		"message": "Newsletter sent successfully",
+	})
 	return nil
+}
+
+// Estructura para la solicitud de envío de boletín
+type SendNewsletterRequest struct {
+	Recipients []struct {
+		Email string `json:"email"`
+	} `json:"recipients"`
 }
 
 // ProgramarEnvío programa el envío de un boletín en una fecha y hora específicas.
@@ -74,13 +140,4 @@ func decodeBase64Attachment(name, data string) (domain.Attachment, error) {
 		Name: name,
 		Data: string(decodedData),
 	}, nil
-}
-
-// isValidFileType verifica si el tipo de archivo es válido.
-func isValidFileType(data []byte) bool {
-	// Implementa la lógica para validar el tipo de archivo
-	// Puedes usar bibliotecas o realizar tus propias verificaciones
-	// En este ejemplo, simplemente se asume que es un PDF, pero debes mejorar esta lógica.
-	// Por ejemplo, podrías buscar patrones específicos en los datos para determinar el tipo.
-	return true
 }

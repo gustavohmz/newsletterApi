@@ -17,12 +17,10 @@ const (
 // Newsletter representa un boletín.
 // swagger:model
 type Newsletter struct {
-	ID             primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty" example:""`
-	Name           string             `json:"name"`
-	Sent           *bool              `json:"sent" default:"false"`
-	Categories     []Category         `json:"categories"`
-	SentRecipients []SentRecipient    `json:"sentRecipients"`
-	Attachments    []Attachment       `json:"attachments"`
+	ID          primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty" example:""`
+	Name        string             `json:"name"`
+	Categories  []Category         `json:"categories"`
+	Attachments []Attachment       `json:"attachments"`
 }
 
 // Attachment representa un archivo adjunto en el boletín.

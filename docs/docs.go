@@ -81,6 +81,15 @@ const docTemplate = `{
                         "name": "newsletterID",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Request body containing recipients",
+                        "name": "requestBody",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/v1.SendNewsletterRequest"
+                        }
                     }
                 ],
                 "responses": {
@@ -286,24 +295,6 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
-                },
-                "sent": {
-                    "type": "boolean",
-                    "default": false
-                },
-                "sentRecipients": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domain.SentRecipient"
-                    }
-                }
-            }
-        },
-        "domain.SentRecipient": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
                 }
             }
         },
@@ -326,6 +317,22 @@ const docTemplate = `{
             "properties": {
                 "error": {
                     "type": "string"
+                }
+            }
+        },
+        "v1.SendNewsletterRequest": {
+            "type": "object",
+            "properties": {
+                "recipients": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "email": {
+                                "type": "string"
+                            }
+                        }
+                    }
                 }
             }
         }

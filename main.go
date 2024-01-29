@@ -25,7 +25,7 @@ func main() {
 	port := 8080
 	address := fmt.Sprintf(":%d", port)
 
-	fmt.Printf("Servidor escuchando en http://localhost%s\n/docs/index.html", address)
+	fmt.Printf("Servidor escuchando en http://localhost%s/docs/index.html\n", address)
 	err = http.ListenAndServe(address, router)
 	if err != nil {
 		fmt.Println(err)

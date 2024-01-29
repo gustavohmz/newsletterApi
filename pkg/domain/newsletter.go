@@ -20,6 +20,7 @@ type Newsletter struct {
 	ID          primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty" example:""`
 	Name        string             `json:"name"`
 	Categories  []Category         `json:"categories"`
+	Content     string             `json:"content"`
 	Attachments []Attachment       `json:"attachments"`
 }
 

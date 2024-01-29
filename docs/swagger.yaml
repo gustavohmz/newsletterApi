@@ -28,6 +28,8 @@ definitions:
         items:
           $ref: '#/definitions/domain.Category'
         type: array
+      content:
+        type: string
       id:
         example: ""
         type: string

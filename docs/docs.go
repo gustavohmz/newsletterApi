@@ -289,6 +289,9 @@ const docTemplate = `{
                         "$ref": "#/definitions/domain.Category"
                     }
                 },
+                "content": {
+                    "type": "string"
+                },
                 "id": {
                     "type": "string",
                     "example": ""

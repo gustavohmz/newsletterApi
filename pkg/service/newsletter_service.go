@@ -60,7 +60,7 @@ func (s *NewsletterService) GetNewsletterByID(newsletterID string) (*domain.News
 // EnvíarNewsletter envía un boletín a una lista de suscriptores.
 func (s *NewsletterService) SendNewsletter(w http.ResponseWriter, r *http.Request, newsletterID string, emailSender email.Sender) error {
 	// Obtener el boletín por ID
-	_, err := s.GetNewsletterByID(newsletterID)
+	newsletter, err := s.GetNewsletterByID(newsletterID)
 	if err != nil {
 		RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve newsletter")
 		return err
@@ -98,11 +98,14 @@ func (s *NewsletterService) SendNewsletter(w http.ResponseWriter, r *http.Reques
 		// Imprimir información del suscriptor (para depuración)
 		fmt.Printf("Subscriber: %+v\n", subscriber)
 
-		// Utilizar el contenido del boletín
-		newsletterContent := "Contenido del boletín"
+		// Verificar si hay contenido en el boletín
+		if newsletter.Content == "" {
+			RespondWithError(w, http.StatusBadRequest, "Newsletter content is empty")
+			return nil
+		}
 
 		// Enviar boletín al destinatario
-		err = emailSender.Send("Asunto del Boletín", newsletterContent, []string{recipient.Email})
+		err = emailSender.Send("Asunto del Boletín", newsletter.Content, []string{recipient.Email})
 		if err != nil {
 			// Manejar el error (puedes logearlo, enviar una respuesta específica, etc.)
 			fmt.Printf("Error sending newsletter to %s: %s\n", recipient.Email, err.Error())

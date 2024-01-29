@@ -1,0 +1,212 @@
+definitions:
+  domain.Attachment:
+    properties:
+      data:
+        type: string
+      name:
+        type: string
+    type: object
+  domain.Category:
+    enum:
+    - 1
+    - 2
+    - 3
+    - 4
+    type: integer
+    x-enum-varnames:
+    - SpecialOffers
+    - Memberships
+    - MonthlyPromotions
+    - NewProducts
+  domain.Newsletter:
+    properties:
+      attachments:
+        items:
+          $ref: '#/definitions/domain.Attachment'
+        type: array
+      categories:
+        items:
+          $ref: '#/definitions/domain.Category'
+        type: array
+      id:
+        example: ""
+        type: string
+      name:
+        type: string
+      sent:
+        default: false
+        type: boolean
+      sentRecipients:
+        items:
+          $ref: '#/definitions/domain.SentRecipient'
+        type: array
+    type: object
+  domain.SentRecipient:
+    properties:
+      email:
+        type: string
+    type: object
+  domain.Subscriber:
+    properties:
+      email:
+        type: string
+      id:
+        type: string
+      subscription_date:
+        type: string
+    type: object
+  v1.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /api/v1/newsletters:
+    post:
+      consumes:
+      - application/json
+      description: Allows an admin user to create a new newsletter
+      parameters:
+      - description: Newsletter details
+        in: body
+        name: newsletter
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Newsletter'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+      summary: Create a new newsletter
+      tags:
+      - newsletters
+  /api/v1/newsletters/send/{newsletterID}:
+    post:
+      consumes:
+      - application/json
+      description: Allows an admin user to send a newsletter to a list of subscribers
+      parameters:
+      - description: ID of the newsletter to be sent
+        in: path
+        name: newsletterID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+      summary: Send newsletter to subscribers
+      tags:
+      - newsletters
+  /api/v1/subscribe/{email}:
+    post:
+      consumes:
+      - application/json
+      description: Allows a user to subscribe to the newsletter
+      parameters:
+      - description: Email address to subscribe
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+      summary: Subscribe to the newsletter
+      tags:
+      - subscribers
+  /api/v1/subscribers/{email}:
+    get:
+      consumes:
+      - application/json
+      description: Get details of a subscriber by email address
+      parameters:
+      - description: Email address to get details
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Subscriber'
+        "404":
+          description: Subscriber not found
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+      summary: Get subscriber by email
+      tags:
+      - subscribers
+  /api/v1/unsubscribe/{email}:
+    delete:
+      consumes:
+      - application/json
+      description: Allows a user to unsubscribe from the newsletter
+      parameters:
+      - description: Email address to unsubscribe
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+      summary: Unsubscribe from the newsletter
+      tags:
+      - subscribers
+swagger: "2.0"

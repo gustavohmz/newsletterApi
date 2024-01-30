@@ -70,6 +70,7 @@ func SubscribeHandler(subscriberService *service.SubscriberService) http.Handler
 // @Accept json
 // @Produce json
 // @Param email path string true "Email address to unsubscribe"
+// @Param category path string true "Category to subscribe to"
 // @Success 200 {string} string "OK"
 // @Failure 400 {object} ErrorResponse "Bad Request"
 // @Failure 500 {object} ErrorResponse "Internal Server Error"
@@ -104,6 +105,7 @@ func UnsubscribeHandler(subscriberService *service.SubscriberService) http.Handl
 // @Accept json
 // @Produce json
 // @Param email path string true "Email address to get details"
+// @Param category path string true "Category to subscribe to"
 // @Success 200 {object} domain.Subscriber
 // @Failure 404 {object} ErrorResponse "Subscriber not found"
 // @Failure 500 {object} ErrorResponse "Internal Server Error"

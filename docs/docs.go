@@ -366,6 +366,13 @@ const docTemplate = `{
                         "name": "email",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Category to subscribe to",
+                        "name": "category",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -408,6 +415,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Email address to unsubscribe",
                         "name": "email",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Category to subscribe to",
+                        "name": "category",
                         "in": "path",
                         "required": true
                     }

@@ -102,9 +102,11 @@ func (s *NewsletterService) SendNewsletter(w http.ResponseWriter, r *http.Reques
 			RespondWithError(w, http.StatusBadRequest, "Newsletter content is empty")
 			return nil
 		}
+		//Se reemplaza en el contenido los parametros %s
+		newsletterContent := fmt.Sprintf(newsletter.Content, subscriber.Email, subscriber.Category)
 
 		// Enviar boletín al suscriptor con archivos adjuntos
-		err = emailSender.Send(newsletter.Subject, newsletter.Content, []string{subscriber.Email}, decodedAttachments)
+		err = emailSender.Send(newsletter.Subject, newsletterContent, decodedAttachments)
 		if err != nil {
 			fmt.Printf("Error sending newsletter to %s: %s\n", subscriber.Email, err.Error())
 			continue

@@ -36,7 +36,6 @@ func SendNewsletterHandler(subscriberService *service.SubscriberService, newslet
 		// Llamar a la función SendNewsletter en el servicio
 		err := newsletterService.SendNewsletter(w, r, newsletterID, emailSender)
 		if err != nil {
-			// Manejar el error (puedes logearlo, enviar una respuesta específica, etc.)
 			fmt.Printf("Error sending newsletter: %s\n", err.Error())
 			return
 		}
@@ -67,6 +66,18 @@ func CreateNewsletterHandler(newsletterService *service.NewsletterService) http.
 		// Validar que se proporcione la categoría
 		if newNewsletter.Category == "" {
 			service.RespondWithError(w, http.StatusBadRequest, "Category is required")
+			return
+		}
+
+		existingNewsletter, err := newsletterService.GetNewsletterByCategory(newNewsletter.Category)
+		if err != nil {
+			service.RespondWithError(w, http.StatusInternalServerError, "Failed to check for existing newsletters")
+			return
+		}
+
+		// Si ya existe un boletín con la misma categoría, retornar un error de conflicto
+		if existingNewsletter != nil {
+			service.RespondWithError(w, http.StatusConflict, "Newsletter with the specified category already exists")
 			return
 		}
 

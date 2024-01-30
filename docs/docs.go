@@ -294,6 +294,9 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "type": {
+                    "type": "string"
                 }
             }
         },
@@ -318,12 +321,18 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "subject": {
+                    "type": "string"
                 }
             }
         },
         "domain.Subscriber": {
             "type": "object",
             "properties": {
+                "category": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },

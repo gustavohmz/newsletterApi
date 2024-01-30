@@ -61,6 +61,23 @@ func (r *NewsletterRepository) UpdateNewsletter(newsletterID string) error {
 	return err
 }
 
+// GetNewsletterByCategory obtiene un boletín por categoría.
+func (r *NewsletterRepository) GetNewsletterByCategory(category string) (*domain.Newsletter, error) {
+	var newsletter domain.Newsletter
+	filter := bson.M{"category": category}
+
+	err := r.newsletterCollection.FindOne(context.TODO(), filter).Decode(&newsletter)
+	if err != nil {
+		// Si no se encuentra un boletín con la categoría dada, retornamos nil y sin error
+		if err == mongo.ErrNoDocuments {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return &newsletter, nil
+}
+
 // GetNewsletters obtiene una lista de boletines con opciones de búsqueda y paginación.
 func (r *NewsletterRepository) GetNewsletters(searchName string, page int, pageSize int) ([]domain.Newsletter, error) {
 	// Crea un filtro para la búsqueda por nombre (si se proporciona)

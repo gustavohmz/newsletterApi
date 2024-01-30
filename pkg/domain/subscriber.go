@@ -12,6 +12,7 @@ type Subscriber struct {
 	ID               primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
 	Email            string             `json:"email"`
 	SubscriptionDate time.Time          `json:"subscription_date"`
+	Category         string             `json:"category"`
 }
 
 type Subscribers []Subscriber

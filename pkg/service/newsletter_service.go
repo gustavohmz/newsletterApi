@@ -42,14 +42,16 @@ func (s *NewsletterService) SaveNewsletter(newsletter domain.Newsletter) error {
 
 	// Reemplazar el slice original con los adjuntos decodificados
 	newsletter.Attachments = decodedAttachments
-
-	// Lógica para guardar el boletín
 	return s.newsletterRepository.SaveNewsletter(newsletter)
 }
 
 // UpdateNewsletter actualiza el campo "sent" del boletín.
 func (s *NewsletterService) UpdateNewsletter(newsletterID string) error {
 	return s.newsletterRepository.UpdateNewsletter(newsletterID)
+}
+
+func (s *NewsletterService) GetNewsletterByCategory(category string) (*domain.Newsletter, error) {
+	return s.newsletterRepository.GetNewsletterByCategory(category)
 }
 
 // GetNewsletterByID obtiene un boletín por ID.
@@ -102,6 +104,12 @@ func (s *NewsletterService) SendNewsletter(w http.ResponseWriter, r *http.Reques
 			}
 			// Si no se encuentra el suscriptor, continuar con el siguiente destinatario
 			fmt.Printf("Subscriber not found for email %s\n", recipient.Email)
+			continue
+		}
+
+		// Verificar si la categoría del suscriptor coincide con la categoría del boletín
+		if subscriber.Category != newsletter.Category {
+			fmt.Printf("Mismatched category for subscriber %s and newsletter %s\n", subscriber.Email, newsletter.Name)
 			continue
 		}
 

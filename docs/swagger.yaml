@@ -136,7 +136,7 @@ paths:
       summary: Send newsletter to subscribers
       tags:
       - newsletters
-  /api/v1/subscribe/{email}:
+  /api/v1/subscribe/{email}/{category}:
     post:
       consumes:
       - application/json
@@ -145,6 +145,11 @@ paths:
       - description: Email address to subscribe
         in: path
         name: email
+        required: true
+        type: string
+      - description: Category to subscribe to
+        in: path
+        name: category
         required: true
         type: string
       produces:

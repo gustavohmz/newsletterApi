@@ -21,13 +21,15 @@ type ErrorResponse struct {
 // @Accept json
 // @Produce json
 // @Param email path string true "Email address to subscribe"
+// @Param category path string true "Category to subscribe to"
 // @Success 200 {string} string "OK"
 // @Failure 400 {object} ErrorResponse "Bad Request"
 // @Failure 500 {object} ErrorResponse "Internal Server Error"
-// @Router /api/v1/subscribe/{email} [post]
+// @Router /api/v1/subscribe/{email}/{category} [post]
 func SubscribeHandler(subscriberService *service.SubscriberService) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		email := mux.Vars(r)["email"]
+		category := mux.Vars(r)["category"]
 		if email == "" || !service.IsValidEmail(email) {
 			service.RespondWithError(w, http.StatusBadRequest, "Invalid or missing email address")
 			return
@@ -41,7 +43,7 @@ func SubscribeHandler(subscriberService *service.SubscriberService) http.Handler
 		}
 
 		// Llamar al servicio para realizar la suscripción
-		err = subscriberService.Subscribe(email)
+		err = subscriberService.Subscribe(email, category)
 		if err != nil {
 			service.RespondWithError(w, http.StatusInternalServerError, "Failed to subscribe user")
 			return

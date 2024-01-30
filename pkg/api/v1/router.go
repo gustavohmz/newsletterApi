@@ -28,7 +28,7 @@ func SetupRouter() *mux.Router {
 	emailSender := email.NewBrevoEmailSender()
 
 	// Configuración de rutas
-	r.HandleFunc("/api/v1/subscribe/{email}", SubscribeHandler(subscriberService)).Methods("POST")
+	r.HandleFunc("/api/v1/subscribe/{email}/{category}", SubscribeHandler(subscriberService)).Methods("POST")
 	r.HandleFunc("/api/v1/unsubscribe/{email}", UnsubscribeHandler(subscriberService)).Methods("DELETE")
 	r.HandleFunc("/api/v1/subscribers/{email}", GetSubscriberHandler(subscriberService)).Methods("GET")
 

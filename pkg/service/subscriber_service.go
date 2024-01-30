@@ -21,10 +21,11 @@ func NewSubscriberService() *SubscriberService {
 }
 
 // Subscribe agrega un nuevo suscriptor.
-func (s *SubscriberService) Subscribe(email string) error {
+func (s *SubscriberService) Subscribe(email string, category string) error {
 	subscriber := domain.Subscriber{
 		Email:            email,
 		SubscriptionDate: time.Now(),
+		Category:         category,
 	}
 
 	return s.subscriberRepository.SaveSubscriber(subscriber)

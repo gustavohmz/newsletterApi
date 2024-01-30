@@ -152,7 +152,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/subscribe/{email}": {
+        "/api/v1/subscribe/{email}/{category}": {
             "post": {
                 "description": "Allows a user to subscribe to the newsletter",
                 "consumes": [
@@ -170,6 +170,13 @@ const docTemplate = `{
                         "type": "string",
                         "description": "Email address to subscribe",
                         "name": "email",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Category to subscribe to",
+                        "name": "category",
                         "in": "path",
                         "required": true
                     }

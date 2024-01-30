@@ -297,34 +297,16 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.Category": {
-            "type": "integer",
-            "enum": [
-                1,
-                2,
-                3,
-                4
-            ],
-            "x-enum-varnames": [
-                "SpecialOffers",
-                "Memberships",
-                "MonthlyPromotions",
-                "NewProducts"
-            ]
-        },
         "domain.Newsletter": {
             "type": "object",
             "properties": {
+                "Category": {
+                    "type": "string"
+                },
                 "attachments": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/domain.Attachment"
-                    }
-                },
-                "categories": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/domain.Category"
                     }
                 },
                 "content": {

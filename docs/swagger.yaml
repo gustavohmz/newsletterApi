@@ -6,27 +6,13 @@ definitions:
       name:
         type: string
     type: object
-  domain.Category:
-    enum:
-    - 1
-    - 2
-    - 3
-    - 4
-    type: integer
-    x-enum-varnames:
-    - SpecialOffers
-    - Memberships
-    - MonthlyPromotions
-    - NewProducts
   domain.Newsletter:
     properties:
+      Category:
+        type: string
       attachments:
         items:
           $ref: '#/definitions/domain.Attachment'
-        type: array
-      categories:
-        items:
-          $ref: '#/definitions/domain.Category'
         type: array
       content:
         type: string

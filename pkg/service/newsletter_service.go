@@ -4,12 +4,12 @@ package service
 
 import (
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"net/http"
 	"newsletter-app/pkg/domain"
 	"newsletter-app/pkg/infrastructure/adapters/email"
 	"newsletter-app/pkg/infrastructure/adapters/mongodb"
-	"time"
 )
 
 // NewsletterService es una estructura que maneja la lógica de negocio relacionada con los boletines.
@@ -86,6 +86,13 @@ func (s *NewsletterService) SendNewsletter(w http.ResponseWriter, r *http.Reques
 		return nil
 	}
 
+	// Decodificar los archivos adjuntos del boletín
+	decodedAttachments, err := DecodeAttachments(newsletter.Attachments)
+	if err != nil {
+		RespondWithError(w, http.StatusBadRequest, "Failed to decode attachments")
+		return err
+	}
+
 	// Iterar sobre los suscriptores y enviar el boletín
 	for _, subscriber := range subscribers {
 		// Imprimir información del suscriptor (para depuración)
@@ -97,10 +104,9 @@ func (s *NewsletterService) SendNewsletter(w http.ResponseWriter, r *http.Reques
 			return nil
 		}
 
-		// Enviar boletín al suscriptor
-		err = emailSender.Send(newsletter.Subject, newsletter.Content, []string{subscriber.Email})
+		// Enviar boletín al suscriptor con archivos adjuntos
+		err = emailSender.Send(newsletter.Subject, newsletter.Content, []string{subscriber.Email}, decodedAttachments)
 		if err != nil {
-			// Manejar el error (puedes logearlo, enviar una respuesta específica, etc.)
 			fmt.Printf("Error sending newsletter to %s: %s\n", subscriber.Email, err.Error())
 			continue
 		}
@@ -117,27 +123,24 @@ func (s *NewsletterService) SendNewsletter(w http.ResponseWriter, r *http.Reques
 	return nil
 }
 
-// Estructura para la solicitud de envío de boletín
-type SendNewsletterRequest struct {
-	Recipients []struct {
-		Email string `json:"email"`
-	} `json:"recipients"`
-}
+// DecodeAttachments decodifica un conjunto de objetos Attachment y retorna los datos de los archivos adjuntos.
+func DecodeAttachments(attachments []domain.Attachment) ([]*domain.Attachment, error) {
+	var decodedAttachments []*domain.Attachment
 
-// ProgramarEnvío programa el envío de un boletín en una fecha y hora específicas.
-func (s *NewsletterService) ProgramarEnvío(newsletterID string, scheduleTime time.Time) error {
-	// Lógica para programar el envío del boletín
-	return nil
-}
+	for _, attachment := range attachments {
+		data, err := base64.StdEncoding.DecodeString(attachment.Data)
+		if err != nil {
+			return nil, errors.New("failed to decode attachment data")
+		}
 
-func decodeBase64Attachment(name, data string) (domain.Attachment, error) {
-	decodedData, err := base64.StdEncoding.DecodeString(data)
-	if err != nil {
-		return domain.Attachment{}, err
+		decodedAttachment := &domain.Attachment{
+			Name: attachment.Name,
+			Data: string(data),
+			Type: attachment.Type,
+		}
+
+		decodedAttachments = append(decodedAttachments, decodedAttachment)
 	}
 
-	return domain.Attachment{
-		Name: name,
-		Data: string(decodedData),
-	}, nil
+	return decodedAttachments, nil
 }

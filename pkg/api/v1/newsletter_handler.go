@@ -1,5 +1,3 @@
-// pkg/api/v1/newsletter_handler.go
-
 package v1
 
 import (

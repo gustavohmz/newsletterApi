@@ -1,5 +1,3 @@
-// pkg/service/newsletter_service.go
-
 package service
 
 import (

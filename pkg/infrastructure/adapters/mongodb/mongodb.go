@@ -1,5 +1,3 @@
-// pkg/infrastructure/adapters/mongodb/mongodb.go
-
 package mongodb
 
 import (

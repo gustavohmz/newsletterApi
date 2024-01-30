@@ -15,9 +15,8 @@ type Sender interface {
 	Send(subject, body string, to []string, attachments []*domain.Attachment) error
 }
 
-// Implementación concreta utilizando el servicio de Brevo o cualquier otro proveedor de correo
+// Implementación concreta utilizando el servicio de Brevo
 type BrevoEmailSender struct {
-	// Puedes agregar configuraciones específicas del proveedor aquí
 }
 
 // NewBrevoEmailSender crea una nueva instancia de BrevoEmailSender

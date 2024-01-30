@@ -1,5 +1,3 @@
-// pkg/api/v1/subscriber_handler.go
-
 package v1
 
 import (

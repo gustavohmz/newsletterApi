@@ -1,5 +1,3 @@
-// pkg/service/subscriber_service.go
-
 package service
 
 import (
@@ -33,7 +31,6 @@ func (s *SubscriberService) Subscribe(email string, category string) error {
 
 // Unsubscribe elimina un suscriptor por su dirección de correo electrónico.
 func (s *SubscriberService) Unsubscribe(email string) error {
-	// Lógica para manejar la cancelación de la suscripción
 	return s.subscriberRepository.DeleteSubscriberByEmail(email)
 }
 

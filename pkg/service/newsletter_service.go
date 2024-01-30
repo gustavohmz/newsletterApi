@@ -36,6 +36,7 @@ func (s *NewsletterService) SaveNewsletter(newsletter domain.Newsletter) error {
 		attachment := domain.Attachment{
 			Name: base64Attachment.Name,
 			Data: base64Attachment.Data,
+			Type: base64Attachment.Type,
 		}
 		decodedAttachments = append(decodedAttachments, attachment)
 	}

@@ -64,18 +64,10 @@ func CreateNewsletterHandler(newsletterService *service.NewsletterService) http.
 			return
 		}
 
-		// Validar que se proporcionen categorías
-		if len(newNewsletter.Categories) == 0 {
-			service.RespondWithError(w, http.StatusBadRequest, "Categories are required")
+		// Validar que se proporcione la categoría
+		if newNewsletter.Category == "" {
+			service.RespondWithError(w, http.StatusBadRequest, "Category is required")
 			return
-		}
-
-		// Validar que las categorías proporcionadas sean válidas
-		for _, cat := range newNewsletter.Categories {
-			if !isValidCategory(cat) {
-				service.RespondWithError(w, http.StatusBadRequest, "Invalid category specified")
-				return
-			}
 		}
 
 		// Lógica para crear el nuevo boletín
@@ -120,15 +112,5 @@ func GetNewslettersHandler(newsletterService *service.NewsletterService) http.Ha
 
 		// Responder con la lista de boletines
 		service.RespondWithJSON(w, http.StatusOK, newsletters)
-	}
-}
-
-// isValidCategory verifica si la categoría proporcionada es válida.
-func isValidCategory(category domain.Category) bool {
-	switch category {
-	case domain.SpecialOffers, domain.Memberships, domain.MonthlyPromotions, domain.NewProducts:
-		return true
-	default:
-		return false
 	}
 }

@@ -62,3 +62,29 @@ func (r *SubscriberRepository) DeleteSubscriberByEmail(email string) error {
 	_, err := r.subscriberCollection.DeleteOne(context.TODO(), bson.M{"email": email})
 	return err
 }
+
+// GetSubscribersByCategory obtiene suscriptores por categoría.
+func (r *SubscriberRepository) GetSubscribersByCategory(category string) ([]domain.Subscriber, error) {
+	filter := bson.M{"category": category}
+
+	cursor, err := r.subscriberCollection.Find(context.TODO(), filter)
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(context.TODO())
+
+	var subscribers []domain.Subscriber
+	for cursor.Next(context.TODO()) {
+		var subscriber domain.Subscriber
+		if err := cursor.Decode(&subscriber); err != nil {
+			return nil, err
+		}
+		subscribers = append(subscribers, subscriber)
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	return subscribers, nil
+}

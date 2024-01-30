@@ -4,7 +4,6 @@ package service
 
 import (
 	"encoding/base64"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"newsletter-app/pkg/domain"
@@ -46,11 +45,6 @@ func (s *NewsletterService) SaveNewsletter(newsletter domain.Newsletter) error {
 	return s.newsletterRepository.SaveNewsletter(newsletter)
 }
 
-// UpdateNewsletter actualiza el campo "sent" del boletín.
-func (s *NewsletterService) UpdateNewsletter(newsletterID string) error {
-	return s.newsletterRepository.UpdateNewsletter(newsletterID)
-}
-
 func (s *NewsletterService) GetNewsletterByCategory(category string) (*domain.Newsletter, error) {
 	return s.newsletterRepository.GetNewsletterByCategory(category)
 }
@@ -79,41 +73,21 @@ func (s *NewsletterService) SendNewsletter(w http.ResponseWriter, r *http.Reques
 		return err
 	}
 
-	// Obtener la lista de destinatarios del cuerpo de la solicitud
-	var requestBody SendNewsletterRequest
-	err = json.NewDecoder(r.Body).Decode(&requestBody)
+	// Obtener la lista de suscriptores con la misma categoría del boletín
+	subscribers, err := s.subscriberRepository.GetSubscribersByCategory(newsletter.Category)
 	if err != nil {
-		RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
+		RespondWithError(w, http.StatusInternalServerError, "Failed to retrieve subscribers")
 		return err
 	}
 
-	// Verificar si hay destinatarios para enviar el boletín
-	if len(requestBody.Recipients) == 0 {
-		RespondWithError(w, http.StatusBadRequest, "No recipients to send the newsletter to")
+	// Verificar si hay suscriptores para enviar el boletín
+	if len(subscribers) == 0 {
+		RespondWithError(w, http.StatusBadRequest, "No subscribers to send the newsletter to")
 		return nil
 	}
 
-	// Iterar sobre los destinatarios y enviar el boletín
-	for _, recipient := range requestBody.Recipients {
-		// Llamar al servicio para obtener el suscriptor por email
-		subscriber, err := s.subscriberRepository.GetSubscriberByEmail(recipient.Email)
-		if err != nil {
-			// Verificar si hubo un error diferente al no encontrar documentos
-			if err.Error() != "mongo: no documents in result" {
-				RespondWithError(w, http.StatusInternalServerError, "Failed to get subscriber")
-				return err
-			}
-			// Si no se encuentra el suscriptor, continuar con el siguiente destinatario
-			fmt.Printf("Subscriber not found for email %s\n", recipient.Email)
-			continue
-		}
-
-		// Verificar si la categoría del suscriptor coincide con la categoría del boletín
-		if subscriber.Category != newsletter.Category {
-			fmt.Printf("Mismatched category for subscriber %s and newsletter %s\n", subscriber.Email, newsletter.Name)
-			continue
-		}
-
+	// Iterar sobre los suscriptores y enviar el boletín
+	for _, subscriber := range subscribers {
 		// Imprimir información del suscriptor (para depuración)
 		fmt.Printf("Subscriber: %+v\n", subscriber)
 
@@ -123,16 +97,16 @@ func (s *NewsletterService) SendNewsletter(w http.ResponseWriter, r *http.Reques
 			return nil
 		}
 
-		// Enviar boletín al destinatario
-		err = emailSender.Send("Asunto del Boletín", newsletter.Content, []string{recipient.Email})
+		// Enviar boletín al suscriptor
+		err = emailSender.Send(newsletter.Subject, newsletter.Content, []string{subscriber.Email})
 		if err != nil {
 			// Manejar el error (puedes logearlo, enviar una respuesta específica, etc.)
-			fmt.Printf("Error sending newsletter to %s: %s\n", recipient.Email, err.Error())
+			fmt.Printf("Error sending newsletter to %s: %s\n", subscriber.Email, err.Error())
 			continue
 		}
 
-		// Registrar el destinatario al que se le envió el boletín
-		fmt.Printf("Newsletter sent to %s\n", recipient.Email)
+		// Registrar el suscriptor al que se le envió el boletín
+		fmt.Printf("Newsletter sent to %s\n", subscriber.Email)
 	}
 
 	// Responder con éxito

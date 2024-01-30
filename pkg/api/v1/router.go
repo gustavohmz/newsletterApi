@@ -10,9 +10,9 @@ import (
 
 // @title Newsletter API
 // @version 1.0
-// @description API para gestionar suscriptores y boletines del boletín.
+// @description API para gestionar boletines.
 // @termsOfService http://swagger.io/terms/
-// @contact name@newsletter.com
+// @contact gustavohdzmz@gmail.com
 // @license MIT
 // @host localhost:8080
 // @BasePath /api/v1

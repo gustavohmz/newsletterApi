@@ -9,7 +9,7 @@ import (
 type Newsletter struct {
 	ID          primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty" example:""`
 	Name        string             `json:"name"`
-	Category    string             `json:"Category"`
+	Category    string             `json:"category"`
 	Content     string             `json:"content"`
 	Attachments []Attachment       `json:"attachments"`
 }

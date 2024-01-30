@@ -300,14 +300,14 @@ const docTemplate = `{
         "domain.Newsletter": {
             "type": "object",
             "properties": {
-                "Category": {
-                    "type": "string"
-                },
                 "attachments": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/domain.Attachment"
                     }
+                },
+                "category": {
+                    "type": "string"
                 },
                 "content": {
                     "type": "string"

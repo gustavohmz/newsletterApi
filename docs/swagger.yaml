@@ -8,12 +8,12 @@ definitions:
     type: object
   domain.Newsletter:
     properties:
-      Category:
-        type: string
       attachments:
         items:
           $ref: '#/definitions/domain.Attachment'
         type: array
+      category:
+        type: string
       content:
         type: string
       id:

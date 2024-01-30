@@ -28,8 +28,9 @@ func SetupRouter() *mux.Router {
 
 	// Configuración de rutas
 	r.HandleFunc("/api/v1/subscribe/{email}/{category}", SubscribeHandler(subscriberService)).Methods("POST")
-	r.HandleFunc("/api/v1/unsubscribe/{email}", UnsubscribeHandler(subscriberService)).Methods("DELETE")
-	r.HandleFunc("/api/v1/subscribers/{email}", GetSubscriberHandler(subscriberService)).Methods("GET")
+	r.HandleFunc("/api/v1/unsubscribe/{email}/{category}", UnsubscribeHandler(subscriberService)).Methods("DELETE")
+	r.HandleFunc("/api/v1/subscribers/{email}/{category}", GetSubscriberHandler(subscriberService)).Methods("GET")
+	r.HandleFunc("/api/v1/subscribers", GetSubscribersHandler(subscriberService)).Methods("GET")
 
 	// Agregar ruta para enviar boletín
 	r.HandleFunc("/api/v1/newsletters/send/{newsletterID}", SendNewsletterHandler(subscriberService, newsletterService, emailSender)).Methods("POST")

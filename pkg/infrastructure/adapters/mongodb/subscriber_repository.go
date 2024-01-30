@@ -26,21 +26,32 @@ func (r *SubscriberRepository) SaveSubscriber(subscriber domain.Subscriber) erro
 	return err
 }
 
-// GetSubscriberByEmail obtiene un suscriptor por dirección de correo electrónico.
-func (r *SubscriberRepository) GetSubscriberByEmail(email string) (*domain.Subscriber, error) {
+// GetSubscriberByEmailAndCategory obtiene un suscriptor por su dirección de correo electrónico y categoría.
+func (r *SubscriberRepository) GetSubscriberByEmailAndCategory(email, category string) (*domain.Subscriber, error) {
 	var subscriber domain.Subscriber
-	err := r.subscriberCollection.FindOne(context.TODO(), bson.M{"email": email}).Decode(&subscriber)
+	filter := bson.M{"email": email, "category": category}
+	err := r.subscriberCollection.FindOne(context.TODO(), filter).Decode(&subscriber)
 	if err != nil {
 		return nil, err
 	}
 	return &subscriber, nil
 }
 
-// GetSubscribers obtiene la lista de suscriptores desde la base de datos.
-func (r *SubscriberRepository) GetSubscribers() ([]domain.Subscriber, error) {
+// GetSubscribers obtiene la lista de suscriptores con parámetros de búsqueda y paginación.
+func (r *SubscriberRepository) GetSubscribers(email, category string, page, pageSize int) ([]domain.Subscriber, error) {
 	var subscribers []domain.Subscriber
 
-	cursor, err := r.subscriberCollection.Find(context.TODO(), bson.M{})
+	filter := bson.M{}
+	if email != "" {
+		filter["email"] = email
+	}
+	if category != "" {
+		filter["category"] = category
+	}
+
+	// Puedes agregar lógica adicional para la paginación aquí si es necesario
+
+	cursor, err := r.subscriberCollection.Find(context.TODO(), filter)
 	if err != nil {
 		return nil, err
 	}
@@ -57,9 +68,16 @@ func (r *SubscriberRepository) GetSubscribers() ([]domain.Subscriber, error) {
 	return subscribers, nil
 }
 
-// DeleteSubscriberByEmail elimina un suscriptor por su dirección de correo electrónico.
-func (r *SubscriberRepository) DeleteSubscriberByEmail(email string) error {
-	_, err := r.subscriberCollection.DeleteOne(context.TODO(), bson.M{"email": email})
+// DeleteSubscriberByEmailAndCategory elimina un suscriptor por su dirección de correo electrónico y/o categoría.
+func (r *SubscriberRepository) DeleteSubscriberByEmail(email, category string) error {
+	filter := bson.M{"email": email}
+
+	// Agregar la condición de categoría si está presente
+	if category != "" {
+		filter["category"] = category
+	}
+
+	_, err := r.subscriberCollection.DeleteMany(context.TODO(), filter)
 	return err
 }
 

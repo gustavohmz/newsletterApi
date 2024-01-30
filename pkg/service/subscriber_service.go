@@ -29,17 +29,17 @@ func (s *SubscriberService) Subscribe(email string, category string) error {
 	return s.subscriberRepository.SaveSubscriber(subscriber)
 }
 
-// Unsubscribe elimina un suscriptor por su dirección de correo electrónico.
-func (s *SubscriberService) Unsubscribe(email string) error {
-	return s.subscriberRepository.DeleteSubscriberByEmail(email)
+// Unsubscribe elimina un suscriptor por su dirección de correo electrónico y categoria.
+func (s *SubscriberService) Unsubscribe(email, category string) error {
+	return s.subscriberRepository.DeleteSubscriberByEmail(email, category)
 }
 
-// GetSubscriberByEmail obtiene un suscriptor por dirección de correo electrónico.
-func (s *SubscriberService) GetSubscriberByEmail(email string) (*domain.Subscriber, error) {
-	return s.subscriberRepository.GetSubscriberByEmail(email)
+// GetSubscriberByEmail obtiene un suscriptor por dirección de correo electrónico y categoria.
+func (s *SubscriberService) GetSubscriberByEmail(email, category string) (*domain.Subscriber, error) {
+	return s.subscriberRepository.GetSubscriberByEmailAndCategory(email, category)
 }
 
-// GetSubscribers obtiene la lista de suscriptores.
-func (s *SubscriberService) GetSubscribers() ([]domain.Subscriber, error) {
-	return s.subscriberRepository.GetSubscribers()
+// GetSubscribers obtiene la lista de suscriptores con parámetros de búsqueda y paginación.
+func (s *SubscriberService) GetSubscribers(email, category string, page, pageSize int) ([]domain.Subscriber, error) {
+	return s.subscriberRepository.GetSubscribers(email, category, page, pageSize)
 }

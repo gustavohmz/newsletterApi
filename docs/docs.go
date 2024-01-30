@@ -196,6 +196,50 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/newsletters/{id}": {
+            "delete": {
+                "description": "Allows an admin user to delete a newsletter",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "newsletters"
+                ],
+                "summary": "Delete a newsletter",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the newsletter to delete",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/subscribe/{email}/{category}": {
             "post": {
                 "description": "Allows a user to subscribe to the newsletter",

@@ -180,3 +180,8 @@ func (s *NewsletterService) UpdateNewsletter(updateRequest request.UpdateNewslet
 	// Llamar a la función de actualización en el repositorio
 	return s.newsletterRepository.UpdateNewsletter(*existingNewsletter)
 }
+
+// DeleteNewsletter elimina un boletín por su ID.
+func (s *NewsletterService) DeleteNewsletter(id string) error {
+	return s.newsletterRepository.DeleteNewsletterByID(id)
+}

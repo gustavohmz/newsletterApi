@@ -118,3 +118,15 @@ func (r *NewsletterRepository) GetNewsletters(searchName string, page int, pageS
 
 	return newsletters, nil
 }
+
+// DeleteNewsletterByID elimina un boletín por su ID.
+func (r *NewsletterRepository) DeleteNewsletterByID(id string) error {
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return err
+	}
+
+	filter := bson.M{"_id": objectID}
+	_, err = r.newsletterCollection.DeleteOne(context.TODO(), filter)
+	return err
+}

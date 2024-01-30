@@ -161,3 +161,37 @@ func UpdateNewsletterHandler(newsletterService *service.NewsletterService) http.
 		})
 	}
 }
+
+// @Summary Delete a newsletter
+// @Description Allows an admin user to delete a newsletter
+// @Tags newsletters
+// @Accept json
+// @Produce json
+// @Param id path string true "ID of the newsletter to delete"
+// @Success 200 {string} string "OK"
+// @Failure 400 {object} ErrorResponse "Bad Request"
+// @Failure 500 {object} ErrorResponse "Internal Server Error"
+// @Router /api/v1/newsletters/{id} [delete]
+func DeleteNewsletterHandler(newsletterService *service.NewsletterService) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Obtener el ID del boletín de los parámetros de la ruta
+		id := mux.Vars(r)["id"]
+		if id == "" {
+			service.RespondWithError(w, http.StatusBadRequest, "Invalid or missing newsletter ID")
+			return
+		}
+
+		// Llamar al servicio para eliminar el boletín
+		err := newsletterService.DeleteNewsletter(id)
+		if err != nil {
+			service.RespondWithError(w, http.StatusInternalServerError, "Failed to delete newsletter")
+			return
+		}
+
+		// Responder con éxito
+		service.RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+			"status":  "OK",
+			"message": "Newsletter deleted successfully",
+		})
+	}
+}

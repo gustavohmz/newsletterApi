@@ -37,6 +37,32 @@ definitions:
       subscription_date:
         type: string
     type: object
+  request.Attachment:
+    properties:
+      data:
+        type: string
+      name:
+        type: string
+      type:
+        type: string
+    type: object
+  request.UpdateNewsletterRequest:
+    properties:
+      attachments:
+        items:
+          $ref: '#/definitions/request.Attachment'
+        type: array
+      category:
+        type: string
+      content:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      subject:
+        type: string
+    type: object
   v1.ErrorResponse:
     properties:
       error:
@@ -105,6 +131,35 @@ paths:
           schema:
             $ref: '#/definitions/v1.ErrorResponse'
       summary: Create a new newsletter
+      tags:
+      - newsletters
+    put:
+      consumes:
+      - application/json
+      description: Allows an admin user to update an existing newsletter
+      parameters:
+      - description: Update newsletter details
+        in: body
+        name: updateRequest
+        required: true
+        schema:
+          $ref: '#/definitions/request.UpdateNewsletterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.ErrorResponse'
+      summary: Update an existing newsletter
       tags:
       - newsletters
   /api/v1/newsletters/send/{newsletterID}:

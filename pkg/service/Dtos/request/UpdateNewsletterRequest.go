@@ -1,13 +1,10 @@
-package domain
+package request
 
-import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
-)
+import "go.mongodb.org/mongo-driver/bson/primitive"
 
-// Newsletter representa un boletín.
-// swagger:model
-type Newsletter struct {
-	ID          primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty" example:""`
+// UpdateNewsletterRequest representa la estructura para la solicitud de actualización del boletín.
+type UpdateNewsletterRequest struct {
+	ID          primitive.ObjectID `json:"id"`
 	Name        string             `json:"name"`
 	Category    string             `json:"category"`
 	Subject     string             `json:"subject"`

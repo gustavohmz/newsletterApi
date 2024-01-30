@@ -10,6 +10,7 @@ import (
 	"newsletter-app/pkg/domain"
 	"newsletter-app/pkg/infrastructure/adapters/email"
 	"newsletter-app/pkg/infrastructure/adapters/mongodb"
+	"newsletter-app/pkg/service/Dtos/request"
 )
 
 // NewsletterService es una estructura que maneja la lógica de negocio relacionada con los boletines.
@@ -143,4 +144,39 @@ func DecodeAttachments(attachments []domain.Attachment) ([]*domain.Attachment, e
 	}
 
 	return decodedAttachments, nil
+}
+
+// UpdateNewsletter actualiza un boletín existente.
+func (s *NewsletterService) UpdateNewsletter(updateRequest request.UpdateNewsletterRequest) error {
+	// Validar que se proporcione el ID
+	if updateRequest.ID.IsZero() {
+		return errors.New("ID is required for update")
+	}
+
+	// Obtener el boletín existente por ID
+	existingNewsletter, err := s.GetNewsletterByID(updateRequest.ID.Hex())
+	if err != nil {
+		return err
+	}
+
+	// Actualizar los campos necesarios
+	existingNewsletter.Name = updateRequest.Name
+	existingNewsletter.Category = updateRequest.Category
+	existingNewsletter.Subject = updateRequest.Subject
+	existingNewsletter.Content = updateRequest.Content
+
+	// Actualizar los archivos adjuntos si se proporcionan en la solicitud de actualización
+	if len(updateRequest.Attachments) > 0 {
+		existingNewsletter.Attachments = make([]domain.Attachment, len(updateRequest.Attachments))
+		for i, attachment := range updateRequest.Attachments {
+			existingNewsletter.Attachments[i] = domain.Attachment{
+				Name: attachment.Name,
+				Data: attachment.Data,
+				Type: attachment.Type,
+			}
+		}
+	}
+
+	// Llamar a la función de actualización en el repositorio
+	return s.newsletterRepository.UpdateNewsletter(*existingNewsletter)
 }

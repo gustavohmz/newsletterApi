@@ -44,20 +44,21 @@ func (r *NewsletterRepository) GetNewsletterByID(newsletterID string) (*domain.N
 }
 
 // UpdateNewsletter actualiza un boletín existente en la base de datos.
-func (r *NewsletterRepository) UpdateNewsletter(newsletterID string) error {
+func (r *NewsletterRepository) UpdateNewsletter(newsletter domain.Newsletter) error {
 	// Crea un filtro para identificar el boletín por su ID
-	objectID, err := primitive.ObjectIDFromHex(newsletterID)
-	if err != nil {
-		return err
-	}
+	filter := bson.M{"_id": newsletter.ID}
 
-	filter := bson.M{"_id": objectID}
-
-	// Crea una actualización para establecer el campo "sent" en true
-	update := bson.M{"$set": bson.M{"sent": true}}
+	// Crea una actualización para establecer los campos proporcionados
+	update := bson.M{"$set": bson.M{
+		"name":        newsletter.Name,
+		"category":    newsletter.Category,
+		"subject":     newsletter.Subject,
+		"content":     newsletter.Content,
+		"attachments": newsletter.Attachments,
+	}}
 
 	// Ejecuta la actualización en la base de datos
-	_, err = r.newsletterCollection.UpdateOne(context.TODO(), filter, update)
+	_, err := r.newsletterCollection.UpdateOne(context.TODO(), filter, update)
 	return err
 }
 

@@ -52,6 +52,50 @@
                     }
                 }
             },
+            "put": {
+                "description": "Allows an admin user to update an existing newsletter",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "newsletters"
+                ],
+                "summary": "Update an existing newsletter",
+                "parameters": [
+                    {
+                        "description": "Update newsletter details",
+                        "name": "updateRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/request.UpdateNewsletterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ErrorResponse"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "Allows an admin user to create a new newsletter",
                 "consumes": [
@@ -336,6 +380,46 @@
                     "type": "string"
                 },
                 "subscription_date": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.Attachment": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "request.UpdateNewsletterRequest": {
+            "type": "object",
+            "properties": {
+                "attachments": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/request.Attachment"
+                    }
+                },
+                "category": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "subject": {
                     "type": "string"
                 }
             }

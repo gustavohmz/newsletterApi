@@ -9,6 +9,7 @@ import (
 	"newsletter-app/pkg/domain"
 	"newsletter-app/pkg/infrastructure/adapters/email"
 	"newsletter-app/pkg/service"
+	"newsletter-app/pkg/service/Dtos/request"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -123,5 +124,40 @@ func GetNewslettersHandler(newsletterService *service.NewsletterService) http.Ha
 
 		// Responder con la lista de boletines
 		service.RespondWithJSON(w, http.StatusOK, newsletters)
+	}
+}
+
+// @Summary Update an existing newsletter
+// @Description Allows an admin user to update an existing newsletter
+// @Tags newsletters
+// @Accept json
+// @Produce json
+// @Param updateRequest body request.UpdateNewsletterRequest true "Update newsletter details"
+// @Success 200 {string} string "OK"
+// @Failure 400 {object} ErrorResponse "Bad Request"
+// @Failure 500 {object} ErrorResponse "Internal Server Error"
+// @Router /api/v1/newsletters [put]
+func UpdateNewsletterHandler(newsletterService *service.NewsletterService) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Decodificar el cuerpo de la solicitud en una estructura de UpdateNewsletterRequest
+		var updateRequest request.UpdateNewsletterRequest
+		err := json.NewDecoder(r.Body).Decode(&updateRequest)
+		if err != nil {
+			service.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
+			return
+		}
+
+		// Lógica para actualizar el boletín
+		err = newsletterService.UpdateNewsletter(updateRequest)
+		if err != nil {
+			service.RespondWithError(w, http.StatusInternalServerError, "Failed to update newsletter")
+			return
+		}
+
+		// Responder con éxito
+		service.RespondWithJSON(w, http.StatusOK, map[string]interface{}{
+			"status":  "OK",
+			"message": "Newsletter updated successfully",
+		})
 	}
 }

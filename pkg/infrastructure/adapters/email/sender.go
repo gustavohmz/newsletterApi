@@ -2,6 +2,7 @@ package email
 
 import (
 	"crypto/tls"
+	"encoding/base64"
 	"io"
 	"newsletter-app/pkg/domain"
 	"strconv"
@@ -47,8 +48,15 @@ func (b *BrevoEmailSender) Send(subject, body string, to []string, attachments [
 
 	// Adjuntar archivos
 	for _, attachment := range attachments {
+		// Convertir la cadena Base64 a datos binarios
+		data, err := base64.StdEncoding.DecodeString(attachment.Data)
+		if err != nil {
+			return err
+		}
+
+		// Adjuntar el archivo al mensaje
 		mailer.Attach(attachment.Name, gomail.SetCopyFunc(func(w io.Writer) error {
-			_, err := w.Write([]byte(attachment.Data))
+			_, err := w.Write(data)
 			return err
 		}))
 	}

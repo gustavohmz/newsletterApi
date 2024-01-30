@@ -128,14 +128,14 @@ func DecodeAttachments(attachments []domain.Attachment) ([]*domain.Attachment, e
 	var decodedAttachments []*domain.Attachment
 
 	for _, attachment := range attachments {
-		data, err := base64.StdEncoding.DecodeString(attachment.Data)
+		_, err := base64.StdEncoding.DecodeString(attachment.Data)
 		if err != nil {
 			return nil, errors.New("failed to decode attachment data")
 		}
 
 		decodedAttachment := &domain.Attachment{
 			Name: attachment.Name,
-			Data: string(data),
+			Data: attachment.Data,
 			Type: attachment.Type,
 		}
 

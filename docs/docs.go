@@ -291,7 +291,62 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/subscribers/{email}": {
+        "/api/v1/subscribers": {
+            "get": {
+                "description": "Retrieves a list of subscribers with optional search and pagination parameters",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "subscribers"
+                ],
+                "summary": "Get a list of subscribers",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Email address of the subscriber to search for",
+                        "name": "email",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Category of the subscriber to search for",
+                        "name": "category",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number for pagination",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Number of items per page for pagination",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/subscribers/{email}/{category}": {
             "get": {
                 "description": "Get details of a subscriber by email address",
                 "consumes": [
@@ -303,7 +358,7 @@ const docTemplate = `{
                 "tags": [
                     "subscribers"
                 ],
-                "summary": "Get subscriber by email",
+                "summary": "Get subscriber by email and category",
                 "parameters": [
                     {
                         "type": "string",
@@ -335,7 +390,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/unsubscribe/{email}": {
+        "/api/v1/unsubscribe/{email}/{category}": {
             "delete": {
                 "description": "Allows a user to unsubscribe from the newsletter",
                 "consumes": [

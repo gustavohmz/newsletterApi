@@ -5,13 +5,21 @@ import (
 	"net/http"
 	v1 "newsletter-app/pkg/api/v1"
 	"newsletter-app/pkg/infrastructure/adapters/mongodb"
+	"os"
 
 	"github.com/gorilla/handlers"
 )
 
 func main() {
+	// Obtener variables de entorno
+	mongoUrl := os.Getenv("mongoUrl")
+	mongoDb := os.Getenv("mongoDb")
+
+	// Construir la cadena de conexión a MongoDB
+	mongoConnectionString := fmt.Sprintf("%s/%s", mongoUrl, mongoDb)
+
 	// Conectar a MongoDB
-	err := mongodb.Connect("mongodb+srv://gustavohdzmz:COERlJXgVI3XSp6M@newsletter.9soh00l.mongodb.net/?retryWrites=true&w=majority")
+	err := mongodb.Connect(mongoConnectionString)
 	if err != nil {
 		fmt.Println("Error al conectar a MongoDB:", err)
 		return

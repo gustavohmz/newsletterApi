@@ -3,6 +3,7 @@ package mongodb
 import (
 	"context"
 	"newsletter-app/pkg/domain"
+	"os"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -15,8 +16,11 @@ type SubscriberRepository struct {
 
 // NewSubscriberRepository crea una nueva instancia de SubscriberRepository.
 func NewSubscriberRepository() *SubscriberRepository {
+	mongoDb := os.Getenv("mongoDb")
+	mongoSubscriberCollection := os.Getenv("mongoSubscriberCollection")
+
 	return &SubscriberRepository{
-		subscriberCollection: client.Database("newsletter-app").Collection("subscribers"),
+		subscriberCollection: client.Database(mongoDb).Collection(mongoSubscriberCollection),
 	}
 }
 

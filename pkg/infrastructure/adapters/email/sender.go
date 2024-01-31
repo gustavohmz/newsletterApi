@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"io"
 	"newsletter-app/pkg/domain"
+	"os"
 	"strconv"
 
 	"gopkg.in/gomail.v2"
@@ -26,10 +27,10 @@ func NewBrevoEmailSender() *BrevoEmailSender {
 
 // Send implementa la interfaz Sender
 func (b *BrevoEmailSender) Send(subject, body string, to []string, attachments []*domain.Attachment) error {
-	emailSender := "gustavohdzmz@gmail.com"
-	emailPass := "ZsM7SmW9NDX063Yd"
-	smtpServer := "smtp-relay.brevo.com"
-	smtpPort := "587"
+	emailSender := os.Getenv("emailSender")
+	emailPass := os.Getenv("emailPass")
+	smtpServer := os.Getenv("smtpServer")
+	smtpPort := os.Getenv("smtpPort")
 
 	smtpPortInt, err := strconv.Atoi(smtpPort)
 	if err != nil {

@@ -3,6 +3,7 @@ package mongodb
 import (
 	"context"
 	"newsletter-app/pkg/domain"
+	"os"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -17,8 +18,11 @@ type NewsletterRepository struct {
 
 // NewNewsletterRepository crea una nueva instancia de NewsletterRepository.
 func NewNewsletterRepository() *NewsletterRepository {
+	mongoDb := os.Getenv("mongoDb")
+	mongoNewsletterCollection := os.Getenv("mongoNewsletterCollection")
+
 	return &NewsletterRepository{
-		newsletterCollection: client.Database("newsletter-app").Collection("newsletters"),
+		newsletterCollection: client.Database(mongoDb).Collection(mongoNewsletterCollection),
 	}
 }
 

@@ -4,7 +4,7 @@ Esta API proporciona servicios para la gestión de boletines informativos y susc
 
 ## Ejecución con Docker
 
-Este proyecto incluye un archivo Dockerfile para facilitar la creación de un contenedor. Asegúrate de definir las variables de entorno necesarias al ejecutar el contenedor.
+Este proyecto incluye un archivo Dockerfile para facilitar la creación de un contenedor.
 
 ```bash
 docker build -t newsletter-app .

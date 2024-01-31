@@ -10,6 +10,8 @@ Este proyecto incluye un archivo Dockerfile para facilitar la creación de un co
 docker build -t newsletter-back .
 docker run -d -p 8080:8080 newsletter-back
 ```
+## Documentación Swagger
+La documentación Swagger está disponible en http://localhost:8080/docs/index.html. Puedes utilizar Swagger para explorar los endpoints, realizar pruebas interactivas y comprender mejor cómo interactuar con la API.
 
 ## Configuración del Entorno
 

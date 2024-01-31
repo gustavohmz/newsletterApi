@@ -13,7 +13,7 @@ docker run -p 8080:8080 --env-file .env newsletter-app
 
 ## Configuración del Entorno
 
-Este proyecto utiliza variables de entorno para su configuración. Asegúrate de definir las siguientes variables en tu entorno de ejecución o archivo `.env`:
+Este proyecto utiliza variables de entorno para su configuración, las variables son las siguientes:
 
 - `mongoUrl`: URL de conexión a MongoDB.
 - `mongoDb`: Nombre de la base de datos MongoDB.

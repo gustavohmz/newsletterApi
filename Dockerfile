@@ -9,7 +9,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 # Compila la aplicación
-RUN go build -o newsletter.
+RUN go build -o newsletter
 ENV \
     mongoUrl=mongodb+srv://gustavohdzmz:COERlJXgVI3XSp6M@newsletter.9soh00l.mongodb.net/?retryWrites=true&w=majority \
     mongoDb=newsletter-app \

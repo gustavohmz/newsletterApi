@@ -9,6 +9,7 @@ import (
 	"newsletter-app/pkg/infrastructure/adapters/email"
 	"newsletter-app/pkg/infrastructure/adapters/mongodb"
 	"newsletter-app/pkg/service/Dtos/request"
+	"strings"
 )
 
 // NewsletterService es una estructura que maneja la lógica de negocio relacionada con los boletines.
@@ -102,11 +103,13 @@ func (s *NewsletterService) SendNewsletter(w http.ResponseWriter, r *http.Reques
 			RespondWithError(w, http.StatusBadRequest, "Newsletter content is empty")
 			return nil
 		}
-		//Se reemplaza en el contenido los parametros %s
-		newsletterContent := fmt.Sprintf(newsletter.Content, subscriber.Email, subscriber.Category)
+
+		// Reemplazar variables en el contenido del boletín
+		emailCategoryConcatenation := fmt.Sprintf("%s|%s", subscriber.Email, subscriber.Category)
+		newsletterContent := strings.ReplaceAll(newsletter.Content, "{email}", emailCategoryConcatenation)
 
 		// Enviar boletín al suscriptor con archivos adjuntos
-		err = emailSender.Send(newsletter.Subject, newsletterContent, decodedAttachments)
+		err = emailSender.Send(newsletter.Subject, newsletterContent, []string{subscriber.Email}, decodedAttachments)
 		if err != nil {
 			fmt.Printf("Error sending newsletter to %s: %s\n", subscriber.Email, err.Error())
 			continue

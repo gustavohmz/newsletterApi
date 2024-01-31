@@ -12,7 +12,7 @@ import (
 
 // Sender define una interfaz para enviar correos electrónicos
 type Sender interface {
-	Send(subject, body string, attachments []*domain.Attachment) error
+	Send(subject, body string, to []string, attachments []*domain.Attachment) error
 }
 
 // Implementación concreta utilizando el servicio de Brevo
@@ -25,7 +25,7 @@ func NewBrevoEmailSender() *BrevoEmailSender {
 }
 
 // Send implementa la interfaz Sender
-func (b *BrevoEmailSender) Send(subject, body string, attachments []*domain.Attachment) error {
+func (b *BrevoEmailSender) Send(subject, body string, to []string, attachments []*domain.Attachment) error {
 	emailSender := "gustavohdzmz@gmail.com"
 	emailPass := "ZsM7SmW9NDX063Yd"
 	smtpServer := "smtp-relay.brevo.com"
@@ -41,6 +41,7 @@ func (b *BrevoEmailSender) Send(subject, body string, attachments []*domain.Atta
 
 	mailer := gomail.NewMessage()
 	mailer.SetHeader("From", emailSender)
+	mailer.SetHeader("To", to...)
 	mailer.SetHeader("Subject", subject)
 	mailer.SetBody("text/html", body)
 

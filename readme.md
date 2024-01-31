@@ -7,8 +7,8 @@ Esta API proporciona servicios para la gestión de boletines informativos y susc
 Este proyecto incluye un archivo Dockerfile para facilitar la creación de un contenedor.
 
 ```bash
-docker build -t newsletter-app .
-docker run -p 8080:8080 --env-file .env newsletter-app
+docker build -t newsletter-back .
+docker run -d -p 8080:8080 newsletter-back
 ```
 
 ## Configuración del Entorno

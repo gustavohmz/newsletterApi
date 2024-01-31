@@ -8,18 +8,22 @@ import (
 	"os"
 
 	"github.com/gorilla/handlers"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	// Obtener variables de entorno
-	mongoUrl := os.Getenv("mongoUrl")
-	mongoDb := os.Getenv("mongoDb")
 
-	// Construir la cadena de conexión a MongoDB
-	mongoConnectionString := fmt.Sprintf("%s/%s", mongoUrl, mongoDb)
-
+	// Cargar variables de entorno desde el archivo .env
+	env := godotenv.Load()
+	if env != nil {
+		fmt.Printf("Error loading .env file: %v\n", env)
+		return
+	}
 	// Conectar a MongoDB
-	err := mongodb.Connect(mongoConnectionString)
+	mongoUrl := os.Getenv("mongoUrl")
+	fmt.Println("MongoDB:", mongoUrl)
+	err := mongodb.Connect(mongoUrl)
 	if err != nil {
 		fmt.Println("Error al conectar a MongoDB:", err)
 		return

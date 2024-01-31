@@ -17,8 +17,8 @@ ENV \
     mongoDb="newsletter-app" \
     mongoNewsletterCollection="newsletters" \
     mongoSubscriberCollection="subscribers" \
-    emailSender="gutavo.gh6@gmail.com" \
-    emailPass="0z953sWGOUy7AZmI" \
+    emailSender="gustavotest025@gmail.com" \
+    emailPass="UAzmCB4Wba5VTxI7" \
     smtpServer="smtp-relay.brevo.com" \
     smtpPort=587
 

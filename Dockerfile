@@ -8,16 +8,18 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 
+COPY . .
+EXPOSE 8080
 # Compila la aplicación
 RUN go build -o newsletter
 ENV \
-    mongoUrl=mongodb+srv://gustavohdzmz:COERlJXgVI3XSp6M@newsletter.9soh00l.mongodb.net/?retryWrites=true&w=majority \
-    mongoDb=newsletter-app \
-    mongoNewsletterCollection=newsletters \
-    mongoSubscriberCollection=subscribers \
-    emailSender=gustavohdzmz@gmail.com \
-    emailPass=ZsM7SmW9NDX063Yd \
-    smtpServer=smtp-relay.brevo.com \
+    mongoUrl="mongodb+srv://gustavohdzmz:COERlJXgVI3XSp6M@newsletter.9soh00l.mongodb.net/?retryWrites=true&w=majority" \
+    mongoDb="newsletter-app" \
+    mongoNewsletterCollection="newsletters" \
+    mongoSubscriberCollection="subscribers" \
+    emailSender="gustavohdzmz@gmail.com" \
+    emailPass="ZsM7SmW9NDX063Yd" \
+    smtpServer="smtp-relay.brevo.com" \
     smtpPort=587
 
 # Ejecuta la aplicación al iniciar el contenedor

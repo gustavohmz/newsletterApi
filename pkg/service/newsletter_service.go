@@ -178,6 +178,9 @@ func (s *NewsletterService) UpdateNewsletter(updateRequest request.UpdateNewslet
 				Type: attachment.Type,
 			}
 		}
+	} else {
+		// No se proporcionan nuevos archivos adjuntos, eliminar los existentes
+		existingNewsletter.Attachments = nil
 	}
 
 	// Llamar a la función de actualización en el repositorio
